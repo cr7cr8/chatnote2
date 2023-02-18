@@ -4,6 +4,37 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import { Audio } from 'expo-av';
 import * as Sharing from 'expo-sharing';
 
+
+import ReAnimated, {
+  useAnimatedStyle, useSharedValue, useDerivedValue,
+  withTiming, cancelAnimation, runOnUI, useAnimatedReaction, runOnJS,
+  useAnimatedGestureHandler,
+  interpolate,
+  withDelay,
+  withSpring,
+  useAnimatedScrollHandler,
+
+  //interpolateColors,
+
+  useAnimatedProps,
+  withSequence,
+  withDecay,
+  useAnimatedRef,
+  ZoomIn,
+  SlideInRight,
+  SlideInDown,
+  SlideInUp,
+  ZoomInLeft,
+  ZoomInEasyUp,
+  ZoomOut,
+  SlideOutRight,
+  SlideOutUp,
+  SlideOutDown,
+  Layout
+
+} from 'react-native-reanimated';
+
+
 export default function App() {
   const [recording, setRecording] = React.useState();
   const [recordings, setRecordings] = React.useState([]);
