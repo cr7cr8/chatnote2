@@ -46,6 +46,9 @@ export default function ContextProvider(props) {
 
     const [unreadCountObj, setUnreadCountObj] = useState({})
 
+    const [latestMsgObj, setLatestMsgObj] = useState({})
+
+
     useEffect(function () {
         Audio.requestPermissionsAsync()
         MediaLibrary.requestPermissionsAsync()
@@ -74,7 +77,9 @@ export default function ContextProvider(props) {
 
             appState,
 
-            unreadCountObj, setUnreadCountObj
+            unreadCountObj, setUnreadCountObj,
+            latestMsgObj, setLatestMsgObj
+            
 
         }}>
 

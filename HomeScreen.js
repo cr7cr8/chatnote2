@@ -65,7 +65,7 @@ export function HomeScreen({ }) {
 
     const initialRouter = useContextSelector(Context, (state) => (state.initialRouter));
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
-   
+
 
     useEffect(() => {
 
@@ -100,23 +100,23 @@ export function HomeScreen({ }) {
 
         const promiseArr = []
         peopleList.forEach((people, index) => {
-          const sender = people.name
-          const folderUri = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/"
-          promiseArr.push(FileSystem.readDirectoryAsync(folderUri).then(unreadArr => {
-            return { [sender]: unreadArr.length }
-          }))
+            const sender = people.name
+            const folderUri = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/"
+            promiseArr.push(FileSystem.readDirectoryAsync(folderUri).then(unreadArr => {
+                return { [sender]: unreadArr.length }
+            }))
         })
-    
+
         Promise.all(promiseArr).then(objArr => {
-          let obj = {}
-          objArr.forEach(o => {
-            obj = { ...obj, ...o }
-          })
-          setUnreadCountObj(obj)
-         
+            let obj = {}
+            objArr.forEach(o => {
+                obj = { ...obj, ...o }
+            })
+            setUnreadCountObj(obj)
+
         })
-    
-      }, [peopleList])
+
+    }, [peopleList])
 
 
 
@@ -161,7 +161,7 @@ function renderItem(props) {
     const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
     const showSnackBar = useContextSelector(Context, (state) => (state.showSnackBar));
     const userName = useContextSelector(Context, (state) => (state.userName));
-   
+
     const unreadCountObj = useContextSelector(Context, (state) => (state.unreadCountObj));
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
 
@@ -180,10 +180,13 @@ function renderItem(props) {
             flexDirection: "row",
             alignItems: "center",
             paddingLeft: 10
-
         }
-
     })
+
+ 
+
+
+
 
     return (
 
@@ -209,12 +212,12 @@ function renderItem(props) {
 
                     <Badge
                         value={unreadCountObj[name] || 0}
-                       
+
                         status="error"
                         containerStyle={{
                             position: 'absolute', top: 10, left: 58, zIndex: 100,
                             transform: [{ scale: Boolean(unreadCountObj[name]) ? 1.2 : 0 }],
-                          
+
                             display: "flex", justifyContent: "center", alignItems: "center"
                         }}
                         badgeStyle={{
@@ -226,7 +229,7 @@ function renderItem(props) {
                         }}
                         textStyle={{
                             transform: [{ translateY: -2 }],
-                            fontSize:10
+                            fontSize: 10
                         }}
                     />
 
@@ -240,6 +243,24 @@ function renderItem(props) {
         </AnimatedComponent >
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 HomeScreen.sharedElements = (route, otherRoute, showing) => {

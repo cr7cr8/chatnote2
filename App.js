@@ -21,7 +21,7 @@ import { io } from "socket.io-client";
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
 export default function App() {
-  console.log(Constants.deviceName)
+ 
   return (
     <ContextProvider><StatusBar /><AppStarter /></ContextProvider>
   );
@@ -54,7 +54,8 @@ function AppStarter() {
   const unreadCountObj = useContextSelector(Context, (state) => (state.unreadCountObj))
   const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj))
 
-
+  const latestMsgObj = useContextSelector(Context, (state) => (state.latestMsgObj))
+  const setLatestMsgObj = useContextSelector(Context, (state) => (state.setLatestMsgObj))
 
 
   //initialize userName , token and server address
@@ -90,7 +91,7 @@ function AppStarter() {
         token: token
       }
     })
-    assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj })
+    assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj, latestMsgObj, setLatestMsgObj })
     setSocket(socket)
     if (!token && socket) { socket.offAny() }  //socket.disconnect()
 
@@ -105,13 +106,15 @@ function AppStarter() {
 
 }
 
-function assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj }) {
+function assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj, latestMsgObj, setLatestMsgObj }) {
   const url = serverAddress
   socket.on("connect", function () {
 
     console.log(`socket ${Constants.deviceName} ${userName} ,  ${socket.id} is connected`)
 
     axios.get(`${url}/api/user/fecthunread`, { headers: { "x-auth-token": token } }).then(response => {
+
+
 
       const msgArr = response.data
       if (msgArr.length === 0) { setPeopleList(pre => [...pre]); return } //causing recount unread in homepage return }
