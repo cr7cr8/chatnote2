@@ -45,7 +45,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createContext, useContextSelector } from 'use-context-selector';
 import { useHeaderHeight } from '@react-navigation/elements';
 //import Image from 'react-native-scalable-image';
-import { OverlayDownloader } from './OverlayDownloader';
+//import { OverlayDownloader } from './OverlayDownloader';
 import { Overlay } from 'react-native-elements/dist/overlay/Overlay';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';

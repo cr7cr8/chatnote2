@@ -44,6 +44,8 @@ export default function ContextProvider(props) {
 
     const appState = useRef(AppState.currentState);
 
+    const [unreadCountObj, setUnreadCountObj] = useState({})
+
     useEffect(function () {
         Audio.requestPermissionsAsync()
         MediaLibrary.requestPermissionsAsync()
@@ -71,6 +73,8 @@ export default function ContextProvider(props) {
             showSnackBar,
 
             appState,
+
+            unreadCountObj, setUnreadCountObj
 
         }}>
 

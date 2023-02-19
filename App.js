@@ -45,7 +45,16 @@ function AppStarter() {
   const serverAddress = useContextSelector(Context, (state) => (state.serverAddress))
   const setServerAddress = useContextSelector(Context, (state) => (state.setServerAddress))
 
+  const peopleList = useContextSelector(Context, (state) => (state.peopleList))
+  const setPeopleList = useContextSelector(Context, (state) => (state.setPeopleList))
+
+
   const appState = useContextSelector(Context, (state) => (state.appState))
+
+  const unreadCountObj = useContextSelector(Context, (state) => (state.unreadCountObj))
+  const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj))
+
+
 
 
   //initialize userName , token and server address
@@ -67,12 +76,6 @@ function AppStarter() {
   //create folder for each contact once token and servre address is assigned
   useEffect(() => {
 
-
-
-
-
-
-
     if (serverAddress && token) {
       axios.get(`${serverAddress}/api/user/fetchuserlist2`, { headers: { "x-auth-token": token } }).then(response => {
         Array.from(response.data).forEach(item => {
@@ -87,7 +90,7 @@ function AppStarter() {
         token: token
       }
     })
-    assignListenning({ socket, userName, appState })
+    assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj })
     setSocket(socket)
     if (!token && socket) { socket.offAny() }  //socket.disconnect()
 
@@ -102,19 +105,44 @@ function AppStarter() {
 
 }
 
-function assignListenning({ socket, userName, appState }) {
+function assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj }) {
+  const url = serverAddress
   socket.on("connect", function () {
 
-    console.log(`${Constants.deviceName} ${userName} socket ${socket.id} is connected`)
+    console.log(`socket ${Constants.deviceName} ${userName} ,  ${socket.id} is connected`)
+
+    axios.get(`${url}/api/user/fecthunread`, { headers: { "x-auth-token": token } }).then(response => {
+
+      const msgArr = response.data
+      if (msgArr.length === 0) { setPeopleList(pre => [...pre]); return } //causing recount unread in homepage return }
+
+      msgArr.forEach((msg, index) => {
+        let sender = msg.toPerson === "AllUser" ? "AllUser" : msg.sender
+        const fileUri = FileSystem.documentDirectory + "MessageFolder/" + sender + "/" + sender + "---" + msg.createdTime
+        const fileUri2 = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/" + sender + "---" + msg.createdTime
+
+
+        if (msg.toPerson !== "AllUser") {
+          FileSystem.writeAsStringAsync(fileUri, JSON.stringify(msg))
+            .then(() => {
+
+              return FileSystem.writeAsStringAsync(fileUri2, JSON.stringify(msg))
+
+            })
+            .then(() => {
+             
+              if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
+            })
+
+
+        }
+
+
+      })
 
 
 
-
-
-
-
-
-
+    })
 
   });
 
@@ -184,6 +212,52 @@ function assignListenning({ socket, userName, appState }) {
 
 
   })
+
+
+  socket.on("saveUnread", function (sender, msgArr) {
+
+    if ((socket.listeners("displayMessage" + sender).length === 0) || appState.current === "background" || appState.current === "inactive") {
+
+      const folderUri = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/"
+      msgArr.forEach((msg) => {
+        const fileUri = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/" + sender + "---" + msg.createdTime
+        FileSystem.getInfoAsync(folderUri)
+          .then(info => {
+            if (!info.exists) {
+              return FileSystem.makeDirectoryAsync(folderUri).catch(err => { console.log(">>>", err) })
+            }
+            else {
+              return info
+            }
+          })
+          .then(() => {
+            return FileSystem.writeAsStringAsync(fileUri, JSON.stringify(msg))
+          })
+      })
+
+      setUnreadCountObj(unreadCountObj => {
+
+        msgArr.forEach(msg => {
+          const sender = msg.sender
+          if (!unreadCountObj[sender]) { unreadCountObj[sender] = 0 }
+          unreadCountObj[sender]++
+        })
+        return { ...unreadCountObj }
+
+      })
+
+
+    }
+
+  })
+
+
+
+  socket.on("disconnect", function (msg) {
+    console.log(`${userName} is disconnected`)
+
+  })
+
 
 
 }

@@ -53,7 +53,7 @@ import {
     findNodeHandle, UIManager, Keyboard, Platform
 } from 'react-native';
 
-import { OverlayDownloader } from './OverlayDownloader';
+//import { OverlayDownloader } from './OverlayDownloader';
 import { ListItem, Avatar, LinearProgress, Tooltip, Icon, Input } from 'react-native-elements';
 import Image from 'react-native-scalable-image';
 import * as FileSystem from 'expo-file-system';

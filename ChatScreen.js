@@ -54,7 +54,7 @@ import {
     findNodeHandle, UIManager, Keyboard, Platform
 } from 'react-native';
 import axios from 'axios';
-import { OverlayDownloader } from './OverlayDownloader';
+//import { OverlayDownloader } from './OverlayDownloader';
 import { ListItem, Avatar, LinearProgress, Tooltip, Icon, Input } from 'react-native-elements';
 import Image from 'react-native-scalable-image';
 import * as FileSystem from 'expo-file-system';
@@ -78,8 +78,9 @@ export function ChatScreen() {
     const url = useContextSelector(Context, (state) => (state.serverAddress))
     const token = useContextSelector(Context, (state) => (state.token))
 
-
     const socket = useContextSelector(Context, (state) => (state.socket))
+    const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj))
+
 
     const avatarString = multiavatar(name)
     const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
@@ -120,7 +121,7 @@ export function ChatScreen() {
             display: isReleased.value === 1 ? "none" : "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "red"
+            //  backgroundColor: "red"
             //    color: "#666",
         }
     })
@@ -332,21 +333,15 @@ export function ChatScreen() {
         FileSystem.readDirectoryAsync(folderUri).then(data => {
 
             const messageHolder = []
-
             data.forEach(filename => {
-
-
                 messageHolder.push(
                     FileSystem.readAsStringAsync(folderUri + filename).then(content => JSON.parse(content))
                 )
             })
 
-
             Promise.all(messageHolder).then(contentArr => {
-
                 canMoveDown.current = true
                 setMessages(pre => {
-
 
                     contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
 
@@ -361,19 +356,46 @@ export function ChatScreen() {
                     const msg2 = contentArr.pop();
                     const msg1 = contentArr.pop();
 
-
-
                     allMessages.current = contentArr
 
                     return GiftedChat.prepend([], uniqByKeepFirst([
-
-
                         msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8, msg9, msg10].filter(msg => Boolean(msg)),
                         function (msg) { return msg._id }))
                 })
 
+            }).then(async function () {
+                const folderUri = FileSystem.documentDirectory + "UnreadFolder/" + name + "/"
+                await FileSystem.deleteAsync(folderUri, { idempotent: true })
+                await FileSystem.makeDirectoryAsync(folderUri)
+
+                setUnreadCountObj(pre => {
+                    return { ...pre, [name]: 0 }
+                })
+
             })
+
+
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }, [])
 
     //displaying messages
@@ -478,7 +500,7 @@ export function ChatScreen() {
 
                         if ((e.nativeEvent.contentOffset.y === 0) && allMessages.current.length === 0) {
                             // console.log("no more left")
-                            showSnackBar("All loaded")
+                            // showSnackBar("All loaded")
                             return
                         }
 
@@ -1731,7 +1753,7 @@ function startRecording() {
         .then((info) => {
             //  console.log("permissions", info)
             if (info.granted) {
-                alert("recording permissions accepted")
+
                 return recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
             }
             else {
@@ -1775,11 +1797,11 @@ function stopRecording({ name, userName, socket, url, token, setMessages, canMov
 
             //     console.log("about to stop Recording", info)
             if (info.isRecording) {
-                alert("stop recording")
+
                 return recording.stopAndUnloadAsync()
             }
             else {
-                alert("fail stop recording")
+                alert("Recording failed")
                 //     recording.stopAndUnloadAsync()
                 return Promise.reject(info)
             }
@@ -1860,7 +1882,7 @@ function stopRecording({ name, userName, socket, url, token, setMessages, canMov
 
         })
         .catch(err => {
-            alert("cannot stop recoding"+ JSON.stringify(err))
+            alert("cannot stop recoding" + JSON.stringify(err))
             console.log("cannot stop recording", err)
             // if (err.message.includes("Stop encountered an error: recording not stopped")) {
             //   await ExponentAV.unloadAudioRecorder();

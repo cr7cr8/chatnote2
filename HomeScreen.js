@@ -36,7 +36,7 @@ import { useNavigation, useRoute, CommonActions } from '@react-navigation/native
 import { useHeaderHeight } from '@react-navigation/elements';
 
 import {
-    StyleSheet, Dimensions, TouchableOpacity, TouchableNativeFeedback, Pressable, TouchableHighlight, TouchableWithoutFeedback, Vibration, Button,
+    StyleSheet, Dimensions, TouchableOpacity, TouchableNativeFeedback, Pressable, TouchableHighlight, TouchableWithoutFeedback, Vibration,
     BackHandler
 
 } from 'react-native';
@@ -44,6 +44,8 @@ import {
 //import * as Svg from 'react-native-svg';
 import SvgUri from 'react-native-svg-uri';
 import { SharedElement } from 'react-navigation-shared-element';
+import * as FileSystem from 'expo-file-system';
+import { ListItem, Avatar, LinearProgress, Button, Icon, Overlay, Badge } from 'react-native-elements'
 const { View, Text, Image, ScrollView: ScrollV, Extrapolate, createAnimatedComponent } = ReAnimated
 
 const AnimatedComponent = createAnimatedComponent(View)
@@ -62,9 +64,8 @@ export function HomeScreen({ }) {
     const token = useContextSelector(Context, (state) => (state.token));
 
     const initialRouter = useContextSelector(Context, (state) => (state.initialRouter));
-
-    //console.log("homescreen username",userName)
-    //console.log("homeScreen route params",route.params)
+    const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
+   
 
     useEffect(() => {
 
@@ -93,6 +94,34 @@ export function HomeScreen({ }) {
             return unsubscribe
         }
     }, [])
+
+
+    useEffect(function () {
+
+        const promiseArr = []
+        peopleList.forEach((people, index) => {
+          const sender = people.name
+          const folderUri = FileSystem.documentDirectory + "UnreadFolder/" + sender + "/"
+          promiseArr.push(FileSystem.readDirectoryAsync(folderUri).then(unreadArr => {
+            return { [sender]: unreadArr.length }
+          }))
+        })
+    
+        Promise.all(promiseArr).then(objArr => {
+          let obj = {}
+          objArr.forEach(o => {
+            obj = { ...obj, ...o }
+          })
+          setUnreadCountObj(obj)
+         
+        })
+    
+      }, [peopleList])
+
+
+
+
+
 
     return (
         <>
@@ -132,7 +161,10 @@ function renderItem(props) {
     const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
     const showSnackBar = useContextSelector(Context, (state) => (state.showSnackBar));
     const userName = useContextSelector(Context, (state) => (state.userName));
-    // console.log(avatarString)
+   
+    const unreadCountObj = useContextSelector(Context, (state) => (state.unreadCountObj));
+    const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
+
 
     const scale = useDerivedValue(() => isActive ? 0.8 : 1)
 
@@ -175,6 +207,28 @@ function renderItem(props) {
                         }
                     </SharedElement>
 
+                    <Badge
+                        value={unreadCountObj[name] || 0}
+                       
+                        status="error"
+                        containerStyle={{
+                            position: 'absolute', top: 10, left: 58, zIndex: 100,
+                            transform: [{ scale: Boolean(unreadCountObj[name]) ? 1.2 : 0 }],
+                          
+                            display: "flex", justifyContent: "center", alignItems: "center"
+                        }}
+                        badgeStyle={{
+                            //     color: "blue",
+                            //      position: 'absolute', top: 10, left: 60, zIndex: 100,
+                            //      backgroundColor:"yellow",
+                            // transform: [{ scale: 1.8 }],
+                            display: "flex", justifyContent: "center", alignItems: "center"
+                        }}
+                        textStyle={{
+                            transform: [{ translateY: -2 }],
+                            fontSize:10
+                        }}
+                    />
 
 
 
