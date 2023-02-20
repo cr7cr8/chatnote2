@@ -150,7 +150,7 @@ export function RegScreen({ }) {
           }}
         />}
 
-        <SharedElement id={userName}>
+        {/* <SharedElement id={userName}> */}
           <Pressable onPress={function () {
             pickImage(setAvatarUri)
 
@@ -161,7 +161,7 @@ export function RegScreen({ }) {
                 : <SvgUri style={{ margin: 10, }} width={120} height={120} svgXmlData={multiavatar(userName || Math.random())} />
             }
           </Pressable>
-        </SharedElement>
+        {/* </SharedElement> */}
 
       </AnimatedComponent>
 
