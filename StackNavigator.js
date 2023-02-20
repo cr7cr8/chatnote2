@@ -16,7 +16,7 @@ import { ImageScreen } from './ImageScreen';
 import { Context } from "./ContextProvider";
 
 import { createContext, useContextSelector } from 'use-context-selector';
-import { hexToRgbA, hexify, moveArr, uniqByKeepFirst, ScaleView, ScaleAcitveView, deleteFolder,createFolder } from "./config";
+import { hexToRgbA, hexify, moveArr, uniqByKeepFirst, ScaleView, ScaleAcitveView, deleteFolder, createFolder } from "./config";
 import multiavatar from '@multiavatar/multiavatar';
 import SvgUri from 'react-native-svg-uri';
 import { SharedElement } from 'react-navigation-shared-element';
@@ -141,6 +141,12 @@ export default function StackNavigator() {
 
           // header={function (props) {     console.log(props)  return <Header {...props} /> }}
 
+
+          listeners={({ navigation, route }) => {
+
+          //  console.log("hhhhh")
+
+          }}
           options={function ({ navigation, route }) {
 
             return {

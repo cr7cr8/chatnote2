@@ -48,6 +48,7 @@ export default function ContextProvider(props) {
 
     const [latestMsgObj, setLatestMsgObj] = useState({})
 
+    const chattedWith = useRef("")
 
     useEffect(function () {
         Audio.requestPermissionsAsync()
@@ -78,8 +79,9 @@ export default function ContextProvider(props) {
             appState,
 
             unreadCountObj, setUnreadCountObj,
-            latestMsgObj, setLatestMsgObj
+            latestMsgObj, setLatestMsgObj,
             
+            chattedWith,
 
         }}>
 

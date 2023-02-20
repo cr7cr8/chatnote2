@@ -46,6 +46,12 @@ import SvgUri from 'react-native-svg-uri';
 import { SharedElement } from 'react-navigation-shared-element';
 import * as FileSystem from 'expo-file-system';
 import { ListItem, Avatar, LinearProgress, Button, Icon, Overlay, Badge } from 'react-native-elements'
+
+
+const { width, height } = Dimensions.get('screen');
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+
+
 const { View, Text, Image, ScrollView: ScrollV, Extrapolate, createAnimatedComponent } = ReAnimated
 
 const AnimatedComponent = createAnimatedComponent(View)
@@ -66,6 +72,11 @@ export function HomeScreen({ }) {
     const initialRouter = useContextSelector(Context, (state) => (state.initialRouter));
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
 
+    const latestMsgObj = useContextSelector(Context, (state) => (state.latestMsgObj));
+    const setLatestMsgObj = useContextSelector(Context, (state) => (state.setLatestMsgObj));
+
+
+    const chattedWith = useContextSelector(Context, (state) => (state.chattedWith));
 
     useEffect(() => {
 
@@ -73,11 +84,45 @@ export function HomeScreen({ }) {
             setPeopleList((pre) => {
                 return uniqByKeepFirst([...pre, ...response.data], function (msg) { return msg.name })
             })
+
+
+        }).then(() => {
+
+            // peopleList.forEach(({ name }) => {
+
+            //     const folderUri = FileSystem.documentDirectory + "MessageFolder/" + name + "/";
+
+            //     const messageHolder = []
+            //     FileSystem.readDirectoryAsync(folderUri).then(data => {
+
+            //         data.forEach(filename => {
+            //             messageHolder.push(
+            //                 FileSystem.readAsStringAsync(folderUri + filename).then(content => JSON.parse(content))
+            //             )
+            //         })
+
+
+            //         Promise.all(messageHolder).then(contentArr => {
+
+            //             contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
+            //             const msg = contentArr.slice(-1)[0]
+
+            //             setLatestMsgObj((pre) => {
+            //                 return { ...pre, [name]: msg }
+            //             })
+            //             // console.log(name, "---", msg)
+            //         })
+
+            //     })
+
+            // })
+
         }).catch(e => console.log(e))
 
         HomeScreen.sharedElements = null
 
     }, [])
+
 
 
 
@@ -118,7 +163,31 @@ export function HomeScreen({ }) {
 
     }, [peopleList])
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", (e) => {
 
+            // console.log("chatted with", chattedWith.current)
+            // const folderUri = FileSystem.documentDirectory + "MessageFolder/" + name + "/";
+            // FileSystem.readDirectoryAsync(folderUri).then(data => {
+
+            //     const messageHolder = []
+            //     data.forEach(filename => {
+            //         messageHolder.push(
+            //             FileSystem.readAsStringAsync(folderUri + filename).then(content => JSON.parse(content))
+            //         )
+            //     })            
+
+
+
+
+
+            // })
+
+        })
+
+        return unsubscribe
+
+    }, [])
 
 
 
@@ -165,12 +234,16 @@ function renderItem(props) {
     const unreadCountObj = useContextSelector(Context, (state) => (state.unreadCountObj));
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
 
+    const latestMsgObj = useContextSelector(Context, (state) => (state.latestMsgObj));
+    const setLatestMsgObj = useContextSelector(Context, (state) => (state.setLatestMsgObj));
+
+    //const chattedWith = useContextSelector(Context, (state) => (state.chattedWith));
 
     const scale = useDerivedValue(() => isActive ? 0.8 : 1)
 
     const panelCss = useAnimatedStyle(() => {
 
-        // console.log("HOME", name)
+
         return {
             backgroundColor: bgColor,
             height: 80,
@@ -182,8 +255,49 @@ function renderItem(props) {
             paddingLeft: 10
         }
     })
+    let text = latestMsgObj?.[name]?.text
+        || (latestMsgObj?.[name]?.image && "[Image]")
+        || (latestMsgObj?.[name]?.audio && "[Audio]")
+        || ""
 
- 
+    if (text) {
+      if(  latestMsgObj?.[name].sender === userName){
+        text = "\u2b05 "+text
+      }
+
+
+    }
+
+    useEffect(() => {
+
+        const folderUri = FileSystem.documentDirectory + "MessageFolder/" + name + "/";
+
+        const messageHolder = []
+        FileSystem.readDirectoryAsync(folderUri).then(data => {
+
+            data.forEach(filename => {
+                messageHolder.push(
+                    FileSystem.readAsStringAsync(folderUri + filename).then(content => JSON.parse(content))
+                )
+            })
+
+
+            Promise.all(messageHolder).then(contentArr => {
+
+                contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
+                const msg = contentArr.slice(-1)[0]
+
+                console.log(msg)
+                setLatestMsgObj((pre) => {
+                    return { ...pre, [name]: msg }
+                })
+                // console.log(name, "---", msg)
+            })
+
+        })
+
+    }, [])
+
 
 
 
@@ -195,6 +309,7 @@ function renderItem(props) {
 
             < Pressable onLongPress={drag} onPress={
                 function () {
+
                     navigation.navigate("ChatScreen", { name, hasAvatar, localImage, randomStr })
                     //showSnackBar(name)
                 }
@@ -235,7 +350,11 @@ function renderItem(props) {
 
 
 
-                    <View style={{ marginHorizontal: 10 }}><Text>{name}</Text></View>
+                    <View style={{ marginHorizontal: 10 }}>
+                        <Text style={{ fontSize: 18 }}>{name}</Text>
+                        <Text style={{ width: width - 100, color: "gray", fontSize: 18, lineHeight: 20, }} ellipsizeMode='tail' numberOfLines={1} >{text}</Text>
+                        {/* <NameText name={name} /> */}
+                    </View>
                 </View>
 
 
@@ -244,7 +363,32 @@ function renderItem(props) {
     )
 }
 
+function NameText({ name }) {
 
+    const latestMsgObj = useContextSelector(Context, (state) => (state.latestMsgObj));
+    const setLatestMsgObj = useContextSelector(Context, (state) => (state.setLatestMsgObj));
+    let text = ""
+    if (latestMsgObj[name]?.image) {
+        text = "[image]"
+    }
+    else if (latestMsgObj[name]?.audio) {
+        text = "[audio]"
+    }
+    else if (latestMsgObj[name]?.text) {
+
+        text = latestMsgObj[name].text
+
+    }
+
+    return (
+
+        <Text style={{ width: width - 100, color: "gray", fontSize: 18, lineHeight: 20, }} ellipsizeMode='tail' numberOfLines={1} >{text}</Text>
+
+    )
+
+
+
+}
 
 
 

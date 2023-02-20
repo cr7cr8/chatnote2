@@ -81,6 +81,10 @@ export function ChatScreen() {
     const socket = useContextSelector(Context, (state) => (state.socket))
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj))
 
+    const latestMsgObj = useContextSelector(Context, (state) => (state.latestMsgObj));
+    const setLatestMsgObj = useContextSelector(Context, (state) => (state.setLatestMsgObj));
+
+
 
     const avatarString = multiavatar(name)
     const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
@@ -188,7 +192,7 @@ export function ChatScreen() {
     })
 
 
-  
+
     const canMoveDown = useRef(true)
     const scrollDepth = useRef(999999)
     const allMessages = useRef([])
@@ -289,7 +293,7 @@ export function ChatScreen() {
     }
     function callStopRecording() {
         console.log("call stop recording")
-        stopRecording({ name, userName, socket, url, token, setMessages, canMoveDown })
+        stopRecording({ name, userName, socket, url, token, setMessages, canMoveDown, setLatestMsgObj })
         //FileSystem.documentDirectory
     }
     function callCancelRecording() {
@@ -674,7 +678,9 @@ export function ChatScreen() {
                     setMessages(preMessages => {
                         return GiftedChat.prepend(preMessages, [msg])
                     })
-
+                    setLatestMsgObj(pre => {
+                        return { ...pre, [name]: msg }
+                    })
 
                     if (userName !== name) {
                         socket.emit("sendMessage",
@@ -684,6 +690,7 @@ export function ChatScreen() {
                                 msgArr: msgArr.map(msg => { return { ...msg, createdTime: Date.parse(msg.createdAt), sender: userName, toPerson: name } })
                             })
                     }
+
                     // console.log(messages_)
                 }}
 
@@ -710,7 +717,7 @@ export function ChatScreen() {
                                 color='#517fa4'
                                 size={45}
                                 onPress={function () {
-                                    pickImage(setMessages, userName, name, socket, url, canMoveDown, token)
+                                    pickImage(setMessages, userName, name, socket, url, canMoveDown, token, setLatestMsgObj)
                                 }}
                             />
 
@@ -720,7 +727,7 @@ export function ChatScreen() {
                                 color='#517fa4'
                                 size={45}
                                 onPress={function () {
-                                    takePhoto(setMessages, userName, name, socket, url, canMoveDown, token)
+                                    takePhoto(setMessages, userName, name, socket, url, canMoveDown, token, setLatestMsgObj)
                                 }}
                             />
 
@@ -1441,7 +1448,7 @@ function deleteMsg(name, currentMessage) {
 
 
 /////////////////////////////////////////////////
-async function pickImage(setMessages, userName, name, socket, url, canMoveDown, token) {
+async function pickImage(setMessages, userName, name, socket, url, canMoveDown, token, setLatestMsgObj) {
     // setIsOverLay(true)
     let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -1479,6 +1486,11 @@ async function pickImage(setMessages, userName, name, socket, url, canMoveDown, 
 
         canMoveDown.current = true
         setMessages(pre => { return [...pre, { ...imageMsg, isLocal: true }] })
+        setLatestMsgObj(pre => {
+            return { ...pre, [name]: { ...imageMsg, isLocal: true } }
+        })
+
+
 
         const formData = new FormData();
         let match = /\.(\w+)$/.exec(imageUri.split('/').pop());
@@ -1515,7 +1527,7 @@ async function pickImage(setMessages, userName, name, socket, url, canMoveDown, 
 
 };
 
-async function takePhoto(setMessages, userName, name, socket, url, canMoveDown, token) {
+async function takePhoto(setMessages, userName, name, socket, url, canMoveDown, token, setLatestMsgObj) {
 
     let result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -1550,6 +1562,11 @@ async function takePhoto(setMessages, userName, name, socket, url, canMoveDown, 
 
         canMoveDown.current = true
         setMessages(pre => { return [...pre, { ...imageMsg, isLocal: true }] })
+        setLatestMsgObj(pre => {
+            return { ...pre, [name]: { ...imageMsg, isLocal: true } }
+        })
+
+
 
         const formData = new FormData();
         let match = /\.(\w+)$/.exec(imageUri.split('/').pop());
@@ -1634,7 +1651,7 @@ function startRecording() {
             console.log("error in startRecording promise ==>")
         })
 }
-function stopRecording({ name, userName, socket, url, token, setMessages, canMoveDown }) {
+function stopRecording({ name, userName, socket, url, token, setMessages, canMoveDown, setLatestMsgObj }) {
 
     let uri = ""
     let audioName = ""
@@ -1711,7 +1728,9 @@ function stopRecording({ name, userName, socket, url, token, setMessages, canMov
                 return GiftedChat.prepend(pre, { ...audioMsg, isLocal: true })
                 //}
             })
-
+            setLatestMsgObj(pre => {
+                return { ...pre, [name]: { ...audioMsg, isLocal: true } }
+            })
 
             const folderUri = FileSystem.documentDirectory + "MessageFolder/" + name + "/"
             const fileUri = folderUri + name + "---" + audioMsg.createdTime

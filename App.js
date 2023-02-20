@@ -21,7 +21,7 @@ import { io } from "socket.io-client";
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
 export default function App() {
- 
+
   return (
     <ContextProvider><StatusBar /><AppStarter /></ContextProvider>
   );
@@ -107,7 +107,9 @@ function AppStarter() {
 }
 
 function assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj, latestMsgObj, setLatestMsgObj }) {
+
   const url = serverAddress
+
   socket.on("connect", function () {
 
     console.log(`socket ${Constants.deviceName} ${userName} ,  ${socket.id} is connected`)
@@ -133,7 +135,7 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
             })
             .then(() => {
-             
+
               if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
             })
 
@@ -149,7 +151,34 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
   });
 
+  socket.on("updateList", function () {
+    
+    axios.get(`${url}/api/user/fetchuserlist`, { headers: { "x-auth-token": token } }).then(response => {
 
+      const promiseArr = []
+
+      response.data.forEach(item => {
+        promiseArr.push(createFolder(item.name))
+      })
+
+      Promise.all(promiseArr)
+        .then(function () {
+
+          setPeopleList(pre => { return response.data })
+
+          // const obj = {}
+          // response.data.forEach(people => {
+          //   obj[people] = null
+          // })
+
+          // setLatestMsgObj(pre => { return { ...obj, ...pre } })
+
+        })
+
+
+    })
+
+  })
 
   socket.on("writeMessage", function (sender, msgArr) {
 
@@ -171,13 +200,14 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
           return FileSystem.writeAsStringAsync(fileUri, JSON.stringify(msg))
         })
         .then(() => {
+          setLatestMsgObj((pre)=>{
 
+            return {...pre,[msg.sender]:msg}
+
+          })
 
           if (socket.listeners("displayMessage" + sender).length === 0) {
             // setLatestMsgObj(pre => {
-
-
-
             //   let objText = ""
 
             //   if (msg.audio) {
