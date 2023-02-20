@@ -313,7 +313,7 @@ export function ChatScreen() {
             }}>
 
 
-                <SharedElement id={name}  >
+                {/* <SharedElement id={name}  > */}
                     {hasAvatar
                         ? <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
                             style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 6 }, { translateX: 0 }], borderRadius: 1000 }}
@@ -324,7 +324,7 @@ export function ChatScreen() {
 
                         }} width={40} height={40} svgXmlData={multiavatar(name)} />
                     }
-                </SharedElement>
+                {/* </SharedElement> */}
 
 
                 <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>

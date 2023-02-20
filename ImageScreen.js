@@ -78,20 +78,9 @@ export function ImageScreen({ navigation, route, }) {
 
       }}>
 
-        {/* <SharedElement id={name}  >
-          {hasAvatar
-            ? <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
-              style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 6 }, { translateX: 0 }], borderRadius: 1000 }}
-            />
-            : <SvgUri style={{
-              margin: 10,
-              transform: [{ translateY: 6 }, { translateX: 0 }]
+      
 
-            }} width={40} height={40} svgXmlData={multiavatar(name)} />
-          }
-        </SharedElement> */}
-
-        <SharedElement id={name}  >
+        {/* <SharedElement id={name}  > */}
           {hasAvatar
             ? <Image source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
               style={{
@@ -105,7 +94,7 @@ export function ImageScreen({ navigation, route, }) {
               transform: [{ translateY: HEADER_HEIGHT }, { translateX: -width / 2 - 40 }, { scale: 1 }]
             }} width={40} height={40} svgXmlData={multiavatar(name)} />
           }
-        </SharedElement>
+        {/* </SharedElement> */}
       </View>
 
 

@@ -135,6 +135,7 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
             })
             .then(() => {
+              setLatestMsgObj((pre)=>{return {...pre,[msg.sender]:msg}})
 
               if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
             })

@@ -316,14 +316,14 @@ function renderItem(props) {
             } >
 
                 <View style={[panelCss]}>
-                    <SharedElement id={name}  >
+                    {/* <SharedElement id={name}  > */}
                         {hasAvatar
                             ? <Image source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
                                 style={{ margin: 0, width: 60, height: 60, borderRadius: 1000 }}
                             />
                             : <SvgUri style={{ margin: 0 }} width={60} height={60} svgXmlData={multiavatar(name)} />
                         }
-                    </SharedElement>
+                    {/* </SharedElement> */}
 
                     <Badge
                         value={unreadCountObj[name] || 0}
