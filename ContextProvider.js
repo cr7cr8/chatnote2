@@ -27,6 +27,7 @@ export default function ContextProvider(props) {
 
 
     const [token, setToken] = useState(false)
+    const [notiToken, setNotiToken] = useState(false)
     const [userName, setUserName] = useState("")
     const [initialRouter, setInitialRouter] = useState("")
     const [serverAddress, setServerAddress] = useState("")
@@ -55,7 +56,7 @@ export default function ContextProvider(props) {
         MediaLibrary.requestPermissionsAsync()
         Notifications.requestPermissionsAsync()
         Notifications.getPermissionsAsync()
-      
+        Notifications.requestPermissionsAsync()
     }, [])
 
 
@@ -64,6 +65,7 @@ export default function ContextProvider(props) {
         <Context.Provider value={{
 
             token, setToken,
+            notiToken, setNotiToken,
             userName, setUserName,
             initialRouter, setInitialRouter,
             serverAddress, setServerAddress,

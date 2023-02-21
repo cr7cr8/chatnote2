@@ -286,8 +286,8 @@ function renderItem(props) {
 
                 contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
                 const msg = contentArr.slice(-1)[0]
-
-                console.log(msg)
+ 
+             
                 setLatestMsgObj((pre) => {
                     return { ...pre, [name]: msg }
                 })

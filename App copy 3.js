@@ -39,25 +39,25 @@ export default function App() {
   }, [])
 
 
-  // return (
-  //   <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-  //     <Button title='aaa' onPress={async function () {
+  return (
+    <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Button title='aaa' onPress={async function () {
 
-  //       await Notifications.scheduleNotificationAsync({
-  //         content: {
-  //           title: "You've got mail! 📬",
-  //         //  sound: 'mySoundFile.wav', // Provide ONLY the base filename
-  //         },
-  //         trigger: {
-  //           seconds: 2,
-  //           channelId: 'new-emails',
-  //         },
-  //       });
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "You've got mail! 📬",
+          //  sound: 'mySoundFile.wav', // Provide ONLY the base filename
+          },
+          trigger: {
+            seconds: 2,
+            channelId: 'new-emails',
+          },
+        });
 
-  //     }} />
-  //   </View>
+      }} />
+    </View>
 
-  // )
+  )
 
 
   return (
@@ -231,9 +231,13 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
               if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
             })
 
+
         }
 
+
       })
+
+
 
     })
 
@@ -251,8 +255,18 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
       Promise.all(promiseArr)
         .then(function () {
+
           setPeopleList(pre => { return response.data })
+
+          // const obj = {}
+          // response.data.forEach(people => {
+          //   obj[people] = null
+          // })
+
+          // setLatestMsgObj(pre => { return { ...obj, ...pre } })
+
         })
+
 
     })
 
@@ -284,7 +298,23 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
           })
 
-         
+          if (socket.listeners("displayMessage" + sender).length === 0) {
+            // setLatestMsgObj(pre => {
+            //   let objText = ""
+
+            //   if (msg.audio) {
+            //     objText = "[audio]"
+            //   }
+            //   else if (msg.image) {
+            //     objText = "[image]"
+            //   }
+            //   else if (msg.text) {
+            //     objText = msg.text
+            //   }
+
+            //   return { ...pre, [msg.sender]: { content: objText, saidTime: msg.createdAt } }
+            // })
+          }
 
 
 
@@ -292,6 +322,18 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
 
     })
+
+
+    // FileSystem.getInfoAsync(folderUri)
+    //   .then(info => {
+    //     if (!info.exists) {
+    //       return FileSystem.makeDirectoryAsync(folderUri).catch(err => { console.log(">>", err) })
+    //     }
+    //     else {
+    //       return info
+    //     }
+    //   })
+
 
 
   })
