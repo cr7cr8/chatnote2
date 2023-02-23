@@ -16,7 +16,7 @@ import { Context } from "./ContextProvider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import jwtDecode from 'jwt-decode';
-import defaultUrl, { createFolder } from "./config";
+import defaultUrl, { createFolder, uniqByKeepFirst } from "./config";
 import { io } from "socket.io-client";
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
@@ -39,25 +39,7 @@ export default function App() {
   }, [])
 
 
-  // return (
-  //   <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-  //     <Button title='aaa' onPress={async function () {
 
-  //       await Notifications.scheduleNotificationAsync({
-  //         content: {
-  //           title: "You've got mail! 📬",
-  //         //  sound: 'mySoundFile.wav', // Provide ONLY the base filename
-  //         },
-  //         trigger: {
-  //           seconds: 2,
-  //           channelId: 'new-emails',
-  //         },
-  //       });
-
-  //     }} />
-  //   </View>
-
-  // )
 
 
   return (
@@ -115,6 +97,33 @@ function AppStarter() {
         ? setServerAddress(serverAddress)
         : AsyncStorage.setItem("serverAddress", defaultUrl, function () { setServerAddress(defaultUrl) })
     })
+
+    AsyncStorage.getItem("notiToken").then((notiToken) => {
+
+      console.log(">>>>", notiToken)
+
+      if ((typeof notiToken === "string") && notiToken.indexOf("[Error:") !== 0) {
+        setNotiToken(notiToken)
+      }
+      else {
+        registerForPushNotificationsAsync().then(notiToken => {
+
+          if ((typeof notiToken === "string") && notiToken.indexOf("[Error:") !== 0) {
+            setNotiToken(notiToken)
+          }
+          else {
+            setNotiToken(null)
+          }
+        })
+      }
+
+
+
+
+    })
+    //todo: generate notitoken here
+
+
   }, [])
 
   //create folder for each contact once token and servre address is assigned
@@ -126,19 +135,33 @@ function AppStarter() {
           createFolder(item)
         })
       })
-    }
 
-    const socket = io(`${serverAddress}`, {
-      auth: {
-        userName: userName,
-        token: token
-      }
-    })
-    assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj, latestMsgObj, setLatestMsgObj, setNotiToken })
-    setSocket(socket)
-    if (!token && socket) { socket.offAny() }  //socket.disconnect()
+      const socket = io(`${serverAddress}`, {
+        auth: {
+          userName: userName,
+          token: token
+        }
+      })
+      assignListenning({ socket, userName, appState, serverAddress, token, setPeopleList, setUnreadCountObj, latestMsgObj, setLatestMsgObj, setNotiToken })
+      setSocket(socket)
+    }
+    if (!token && socket) { socket.offAny() }
 
   }, [serverAddress, token])
+
+
+
+
+
+  useEffect(() => {
+    if (serverAddress && token && notiToken) {
+      axios.post(`${serverAddress}/api/user/updatenotitoken`, { notiToken: notiToken }, { headers: { "x-auth-token": token } })
+
+    }
+  }, [serverAddress, token, notiToken])
+
+
+
 
 
   return (
@@ -161,49 +184,29 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
     const { status } = await Notifications.requestPermissionsAsync();
     console.log("notification", status)
 
+    axios.get(`${url}/api/user/fetchuserlist`, { headers: { "x-auth-token": token } }).then(response => {
 
-    Notifications.scheduleNotificationAsync({
-      identifier: "default1",
-      content: {
-        title: "ok",
-        body: "just a test"
-      },
-      trigger: null// { seconds: 2 },
-    });
+      const promiseArr = []
+
+      response.data.forEach(item => {
+        promiseArr.push(createFolder(item.name))
+      })
+
+      Promise.all(promiseArr)
+        .then(function () {
 
 
-    // AsyncStorage.getItem("notiToken").then(notiToken => {
 
-    //   registerForPushNotificationsAsync().then(newNotiToken => {
-
-    //     //console.log("reconnect notitoken is:", newNotiToken)
-    //     if ((typeof newNotiToken === "string") && (newNotiToken !== "[Error: Fetching the token failed: SERVICE_NOT_AVAILABLE]") && (notiToken !== newNotiToken)) {
-
-    //       //console.log("register notitoken is:", notiToken)
-    //       setNotiToken(newNotiToken)
-    //       AsyncStorage.setItem("notiToken", newNotiToken)
-    //     }
-    //     else if ((typeof newNotiToken === "string") && (newNotiToken === notiToken)) {
-    //       console.log(Constants.deviceName, "reconnect notitoken same",newNotiToken)
-    //       // console.log("notiToken not avaliable")
-    //     }
-    //     else if (typeof newNotiToken !== "string") {
-    //       console.log(Constants.deviceName, "reconnect notitoken fail")
-    //     }
-
-    //   })
-    //     .catch(err => {
-    //       console.log(Constants.deviceName, "error in context.js get notitoken", err)
-    //     })
-    // })
+          setPeopleList((pre) => {
+            return uniqByKeepFirst([...pre, ...response.data], function (msg) { return msg.name })
+          })
 
 
 
 
+        })
 
-
-
-
+    })
 
     axios.get(`${url}/api/user/fecthunread`, { headers: { "x-auth-token": token } }).then(response => {
 
@@ -230,8 +233,21 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
               if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
             })
+        }
+
+        if (msg.toPerson === "AllUser") {
+          FileSystem.writeAsStringAsync(fileUri, JSON.stringify(msg))
+            .then(() => {
+              setLatestMsgObj((pre) => { return { ...pre, "AllUser": msg } })
+
+              if (index === msgArr.length - 1) setPeopleList(pre => [...pre]) //causing recount unread in homepage
+            })
+
 
         }
+
+
+
 
       })
 
@@ -284,7 +300,7 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
           })
 
-         
+
 
 
 
@@ -335,6 +351,49 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
   })
 
 
+  socket.on("notifyUser", function (sender, msgArr) {
+    if ((socket.listeners("displayMessage" + sender).length === 0) || appState.current === "background" || appState.current === "inactive") {
+      Notifications.scheduleNotificationAsync({
+        identifier: "default1",
+
+        content: {
+          title: msgArr[0].sender,
+          body: msgArr[0].image
+            ? "[image] made by local"
+            : msgArr[0].audio
+              ? "[audio] made by local"
+              : msgArr[0].text + " made by local",
+        },
+        trigger: null// { seconds: 2 },
+      });
+    }
+  })
+
+  socket.on("writeRoomMessage", function (sender, msgArr) {
+
+   
+
+
+    const folderUri = FileSystem.documentDirectory + "MessageFolder/" + "AllUser" + "/"
+
+    msgArr.forEach(msg => {
+
+      const fileUri = folderUri + "AllUser" + "---" + msg.createdTime
+      FileSystem.writeAsStringAsync(fileUri, JSON.stringify(msg))
+        .then(() => {
+  
+          setLatestMsgObj(pre => {
+            return { ...pre, "AllUser": msg }
+          })
+       
+        })
+    })
+
+
+
+  })
+
+
 
   socket.on("disconnect", function (msg) {
     console.log(`${userName} is disconnected`)
@@ -344,7 +403,6 @@ function assignListenning({ socket, userName, appState, serverAddress, token, se
 
 
 }
-
 
 
 

@@ -12,6 +12,9 @@ import { AdressScreen } from './AddressScreen';
 import { RegScreen } from './RegScreen';
 import { HomeScreen } from './HomeScreen';
 import { ChatScreen } from './ChatScreen';
+import { ChatAllScreen } from './ChatAllScreen';
+
+
 import { ImageScreen } from './ImageScreen';
 import { Context } from "./ContextProvider";
 
@@ -144,7 +147,7 @@ export default function StackNavigator() {
 
           listeners={({ navigation, route }) => {
 
-          //  console.log("hhhhh")
+            //  console.log("hhhhh")
 
           }}
           options={function ({ navigation, route }) {
@@ -245,6 +248,54 @@ export default function StackNavigator() {
           }}
 
         />
+
+
+        <Stack.Screen name="ChatAllScreen"
+
+          component={ChatAllScreen}
+
+          // header={function (props) {     console.log(props)  return <Header {...props} /> }}
+
+          options={function ({ navigation, route }) {
+            const name = route.params.item
+            const avatarString = multiavatar(name)
+            const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
+
+
+            return {
+              headerShown: true,
+              gestureEnabled: false,
+              //     headerTintColor: 'orange',
+              header: (props) => <Header {...props} />,
+
+              //   headerLeft: () => null,
+              headerStyle: {
+                height: getStatusBarHeight() > 24 ? 70 : 60,
+                elevation: 0,
+                backgroundColor: "rgba(0,0,255 ,0.5)",
+              },
+              headerTitle: function (props) { return <></> },
+              headerRight: () => (
+                <Button
+                  title="delete"
+                  onPress={async function () {
+                    await deleteFolder(route.params.name)
+                    createFolder(route.params.name)
+                  
+                  }}
+                />
+              ),
+
+            }
+
+          }}
+
+        />
+
+
+
+
+
         <Stack.Screen name="ImageScreen"
           component={ImageScreen}
           options={function ({ navigation, route }) {

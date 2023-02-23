@@ -80,44 +80,15 @@ export function HomeScreen({ }) {
 
     useEffect(() => {
 
-        axios.get(`${url}/api/user/fetchuserlist`, { headers: { "x-auth-token": token } }).then(response => {
-            setPeopleList((pre) => {
-                return uniqByKeepFirst([...pre, ...response.data], function (msg) { return msg.name })
-            })
+        // axios.get(`${url}/api/user/fetchuserlist`, { headers: { "x-auth-token": token } }).then(response => {
+        //     setPeopleList((pre) => {
+        //         return uniqByKeepFirst([...pre, ...response.data], function (msg) { return msg.name })
+        //     })
+
+        // }).then(() => {
 
 
-        }).then(() => {
-
-            // peopleList.forEach(({ name }) => {
-
-            //     const folderUri = FileSystem.documentDirectory + "MessageFolder/" + name + "/";
-
-            //     const messageHolder = []
-            //     FileSystem.readDirectoryAsync(folderUri).then(data => {
-
-            //         data.forEach(filename => {
-            //             messageHolder.push(
-            //                 FileSystem.readAsStringAsync(folderUri + filename).then(content => JSON.parse(content))
-            //             )
-            //         })
-
-
-            //         Promise.all(messageHolder).then(contentArr => {
-
-            //             contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
-            //             const msg = contentArr.slice(-1)[0]
-
-            //             setLatestMsgObj((pre) => {
-            //                 return { ...pre, [name]: msg }
-            //             })
-            //             // console.log(name, "---", msg)
-            //         })
-
-            //     })
-
-            // })
-
-        }).catch(e => console.log(e))
+        // }).catch(e => console.log(e))
 
         HomeScreen.sharedElements = null
 
@@ -261,11 +232,12 @@ function renderItem(props) {
         || ""
 
     if (text) {
-      if(  latestMsgObj?.[name].sender === userName){
-        text = "\u2b05 "+text
-      }
-
-
+        if (latestMsgObj?.[name].sender === userName) {
+            text = "\u2b05 " + text
+        }
+        if ((latestMsgObj?.[name].toPerson === "AllUser") && (latestMsgObj?.[name].sender !== userName)) {
+            text = latestMsgObj?.[name].sender + ": " + text
+        }
     }
 
     useEffect(() => {
@@ -286,8 +258,8 @@ function renderItem(props) {
 
                 contentArr.sort((msg1, msg2) => msg1.createdTime - msg2.createdTime)
                 const msg = contentArr.slice(-1)[0]
- 
-             
+
+
                 setLatestMsgObj((pre) => {
                     return { ...pre, [name]: msg }
                 })
@@ -310,19 +282,21 @@ function renderItem(props) {
             < Pressable onLongPress={drag} onPress={
                 function () {
 
-                    navigation.navigate("ChatScreen", { name, hasAvatar, localImage, randomStr })
+                    name === "AllUser"
+                        ? navigation.navigate("ChatAllScreen", { name, hasAvatar, localImage, randomStr })
+                        : navigation.navigate("ChatScreen", { name, hasAvatar, localImage, randomStr })
                     //showSnackBar(name)
                 }
             } >
 
                 <View style={[panelCss]}>
                     {/* <SharedElement id={name}  > */}
-                        {hasAvatar
-                            ? <Image source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
-                                style={{ margin: 0, width: 60, height: 60, borderRadius: 1000 }}
-                            />
-                            : <SvgUri style={{ margin: 0 }} width={60} height={60} svgXmlData={multiavatar(name)} />
-                        }
+                    {hasAvatar
+                        ? <Image source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
+                            style={{ margin: 0, width: 60, height: 60, borderRadius: 1000 }}
+                        />
+                        : <SvgUri style={{ margin: 0 }} width={60} height={60} svgXmlData={multiavatar(name)} />
+                    }
                     {/* </SharedElement> */}
 
                     <Badge
@@ -362,6 +336,18 @@ function renderItem(props) {
         </AnimatedComponent >
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 function NameText({ name }) {
 
