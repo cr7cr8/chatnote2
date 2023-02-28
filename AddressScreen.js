@@ -87,12 +87,15 @@ export function AdressScreen() {
 
 
     return (
-        <View style={{ width, height, backgroundColor: "pink" }}>
-            <AnimatedComponent style={{ backgroundColor: "wheat", width, height: (height - HEADER_HEIGHT) * 0.4 }}>
+        <View style={{ width, height, backgroundColor: "wheat" }}>
+
+            <View style={{ width, height: HEADER_HEIGHT, backgroundColor: "wheat" }} />
+
+            <AnimatedComponent style={{ backgroundColor: "wheat", width}}>
                 <Input
                     value={serverAddress}
                     ref={inputRef}
-                    containerStyle={{ top: 50 }}
+                    containerStyle={{ top: 15 }}
                     onPressIn={function () {
 
                         inputRef.current.blur()
@@ -106,7 +109,10 @@ export function AdressScreen() {
 
                 />
 
-                <Button title="save" containerStyle={{ top: 50, width: width * 0.8, left: width * 0.1, }}
+             
+            </AnimatedComponent >
+            
+            <Button title="save" containerStyle={{ marginTop:20, width: width * 0.8, left: width * 0.1, }}
                     onPress={function () {
 
                         AsyncStorage.setItem("serverAddress", serverAddress, function () {
@@ -114,26 +120,23 @@ export function AdressScreen() {
                             navigation.goBack()
                             setTimeout(function () {
 
-                                showSnackBar(serverAddress)
+                               // showSnackBar(serverAddress)
                             }, 100)
 
 
                         })
                     }}
-
-
-
                 />
-            </AnimatedComponent >
 
-            <AnimatedComponent style={{ backgroundColor: "wheat", width, height: (height - HEADER_HEIGHT) * 0.6, alignItems: "center", justifyContent: "flex-end", }}>
+
+            <AnimatedComponent style={{  marginTop:200,width, alignItems: "center",justifyContent:"flex-end" }}>
                 <Button type="outline" title="default" containerStyle={{ width: width * 0.8, marginBottom: 10 }}
                     onPress={function () {
 
                         AsyncStorage.setItem("serverAddress", defaultUrl, function () {
                           
                             setServerAddress(defaultUrl)
-                            showSnackBar(defaultUrl)
+                          //  showSnackBar(defaultUrl)
 
 
                         })
@@ -143,7 +146,7 @@ export function AdressScreen() {
 
 
                 />
-                <Button type="outline" title="back" containerStyle={{ width: width * 0.8, marginBottom: 10 }}
+                <Button type="outline" title="back" containerStyle={{ width: width * 0.8, marginBottom: 80 }}
 
                     onPress={function () {
                         navigation.goBack()

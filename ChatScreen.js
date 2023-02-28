@@ -62,6 +62,10 @@ import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 const { View, Text, ScrollView: ScrollV, Extrapolate, createAnimatedComponent, Image: ImageV } = ReAnimated
 
+
+
+
+
 const AnimatedComponent = createAnimatedComponent(View)
 let recording = new Audio.Recording();
 let audioSound = new Audio.Sound();
@@ -305,31 +309,49 @@ export function ChatScreen() {
         <>
 
             <View style={{
-                position: "absolute", display: "flex", justifyContent: "center", alignItems: "center",
-                transform: [{ translateY: -HEADER_HEIGHT }],
+
+                display: "flex", justifyContent: "center", alignItems: "center",
+
+
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
                 zIndex: 100
-            }}>
+            }}
+
+            >
 
 
                 {/* <SharedElement id={name}  > */}
-                    {hasAvatar
-                        ? <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
-                            style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 6 }, { translateX: 0 }], borderRadius: 1000 }}
+
+                {hasAvatar
+                    ? <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                        <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
+                            style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: getStatusBarHeight() > 24 ? 10 : 6 }, { translateX: 0 }], borderRadius: 1000 }}
                         />
-                        : <SvgUri style={{
+                    </Pressable>
+
+                    : <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                        <SvgUri style={{
                             margin: 10,
-                            transform: [{ translateY: 6 }, { translateX: 0 }]
+                            transform: [{ translateY: getStatusBarHeight() > 24 ? 10 : 6 }, { translateX: 0 }]
 
                         }} width={40} height={40} svgXmlData={multiavatar(name)} />
-                    }
+                    </Pressable>
+
+                }
                 {/* </SharedElement> */}
 
+                <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                    <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>
+                </Pressable>
 
-                <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>
             </View>
 
+            {/* <Pressable onPress={function () { console.log(Date.now()) }} style={{ zIndex: 2000 }}>
+                <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
+                    style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 0 }, { translateX: 0 }], borderRadius: 1000 }}
+                />
+            </Pressable> */}
             <GiftedChat
 
                 user={{ _id: userName }}

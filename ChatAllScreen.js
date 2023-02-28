@@ -279,7 +279,7 @@ export function ChatAllScreen() {
 
     function callStartRecording() {
         startRecording()
-    
+
     }
     function callStopRecording() {
         console.log("call stop recording")
@@ -295,8 +295,8 @@ export function ChatAllScreen() {
         <>
 
             <View style={{
-                position: "absolute", display: "flex", justifyContent: "center", alignItems: "center",
-                transform: [{ translateY: -HEADER_HEIGHT }],
+                display: "flex", justifyContent: "center", alignItems: "center",
+
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
                 zIndex: 100
@@ -304,20 +304,24 @@ export function ChatAllScreen() {
 
 
                 {/* <SharedElement id={name}  > */}
-                    {hasAvatar
-                        ? <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
+                {hasAvatar
+                    ? <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                        <ImageV source={{ uri: localImage || `${url}/api/image/avatar/${name}?${randomStr}` }} resizeMode="cover"
                             style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 6 }, { translateX: 0 }], borderRadius: 1000 }}
-                        />
-                        : <SvgUri style={{
+                        /></Pressable>
+                    : <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                        <SvgUri style={{
                             margin: 10,
                             transform: [{ translateY: 6 }, { translateX: 0 }]
 
                         }} width={40} height={40} svgXmlData={multiavatar(name)} />
-                    }
+                    </Pressable>
+                }
                 {/* </SharedElement> */}
 
-
-                <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>
+                <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
+                    <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>
+                </Pressable>
             </View>
 
             <GiftedChat
@@ -841,7 +845,7 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
 
 
     const peopleList = useContextSelector(Context, (state) => (state.peopleList));
-    const isAvatar = Array.from(peopleList).find(item=>item.name===name).hasAvatar
+    const isAvatar = Array.from(peopleList).find(item => item.name === name).hasAvatar
 
 
     return (
@@ -1004,19 +1008,19 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
                         }
                         if (uri.indexOf("http") === 0) {
 
-                           // axios.get(`${url}/api/image/deleteimage/${currentMessage.picName}`, { headers: { "x-auth-token": token } }).then(response => { })
+                            // axios.get(`${url}/api/image/deleteimage/${currentMessage.picName}`, { headers: { "x-auth-token": token } }).then(response => { })
 
-                           
+
                             canMoveDown.current = false
                             setMessages(messages => { return messages.filter(msg => { return msg._id !== currentMessage._id }) })
                             deleteMsg(name, currentMessage)
                         }
 
 
-                   
+
                     }} />}
 
-             
+
 
 
                 </AnimatedComponent>
@@ -1244,7 +1248,7 @@ function AudioBlock({ name, userName, url, token, setMessages, canMoveDown, ...p
 
 
 
-  
+
 
     }, [])
 

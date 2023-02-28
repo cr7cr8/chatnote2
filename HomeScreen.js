@@ -48,6 +48,9 @@ import * as FileSystem from 'expo-file-system';
 import { ListItem, Avatar, LinearProgress, Button, Icon, Overlay, Badge } from 'react-native-elements'
 
 
+const { compareAsc, format, formatDistanceToNow, } = require("date-fns");
+const { zhCN } = require('date-fns/locale');
+
 const { width, height } = Dimensions.get('screen');
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -231,6 +234,8 @@ function renderItem(props) {
         || (latestMsgObj?.[name]?.audio && "[Audio]")
         || ""
 
+    const textTime = latestMsgObj?.[name]?.createdAt || ""
+
     if (text) {
         if (latestMsgObj?.[name].sender === userName) {
             text = "\u2b05 " + text
@@ -325,7 +330,14 @@ function renderItem(props) {
 
 
                     <View style={{ marginHorizontal: 10 }}>
-                        <Text style={{ fontSize: 18 }}>{name}</Text>
+                        <View style={{display:"flex",flexDirection:"row"}}>
+                            <Text style={{ fontSize: 18 }}>
+                                {name + "  "}
+                            </Text>
+                            <Text style={{color:"gray",transform:[{translateY:6}]}}>
+                                {textTime && formatDistanceToNow(new Date(textTime)).replace("about", "").replace(" hour", "h").replace(" minutes", "m").replace(" hours","h")}
+                            </Text>
+                        </View>
                         <Text style={{ width: width - 100, color: "gray", fontSize: 18, lineHeight: 20, }} ellipsizeMode='tail' numberOfLines={1} >{text}</Text>
                         {/* <NameText name={name} /> */}
                     </View>

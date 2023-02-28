@@ -131,12 +131,12 @@ export function RegScreen({ }) {
   return (
     <View style={{ width, height, backgroundColor: "wheat" }}>
 
+      <View style={{ width, height: getStatusBarHeight(),backgroundColor:bgColor }} />
+      <AnimatedComponent entering={BounceIn} style={{ backgroundColor: bgColor, width, justifyContent: "flex-start", alignItems: "center" }}>
 
-      <AnimatedComponent entering={BounceIn} style={{ backgroundColor: bgColor, width, height: height / 3, justifyContent: "center", alignItems: "center" }}>
 
 
-
-        {avatarUri && <Icon name="trash-outline" type='ionicon' color='gray' containerStyle={{ position: "absolute", top: 0 + getStatusBarHeight() + 10, right: 50 }} size={30}
+        {avatarUri && <Icon name="trash-outline" type='ionicon' color='gray' containerStyle={{ position: "absolute", top: 0 + getStatusBarHeight() + 10, right: 50 }} size={40}
           onPress={function () {
             FileSystem.readDirectoryAsync(FileSystem.cacheDirectory + "ImagePicker/").then(data => {
               data.forEach(filename_ => {
@@ -151,34 +151,37 @@ export function RegScreen({ }) {
         />}
 
         {/* <SharedElement id={userName}> */}
-          <Pressable onPress={function () {
-            pickImage(setAvatarUri)
+        <Pressable onPress={function () {
+          pickImage(setAvatarUri)
 
-          }}>
-            {
-              avatarUri
-                ? <Image source={{ uri: avatarUri }} resizeMode="cover" style={{ width: 120, height: 120, borderRadius: 1000 }} />
-                : <SvgUri style={{ margin: 10, }} width={120} height={120} svgXmlData={multiavatar(userName || Math.random())} />
-            }
-          </Pressable>
+        }}>
+          {
+            avatarUri
+              ? <Image source={{ uri: avatarUri }} resizeMode="cover" style={{ margin: 10, width: 120, height: 120, borderRadius: 1000 }} />
+              : <SvgUri style={{ margin: 10, }} width={120} height={120} svgXmlData={multiavatar(userName || Math.random())} />
+          }
+        </Pressable>
         {/* </SharedElement> */}
 
+
+        <AnimatedComponent entering={BounceInDown.delay(300)}>
+          <Input ref={inputRef} placeholder='Enter a name' multiline={false}
+            inputContainerStyle={{ width: 0.8 * width, }}
+            style={{ fontSize: 25 }}
+            value={userName}
+            textAlign={'center'}
+            onPressIn={function () { inputRef.current.blur(); inputRef.current.focus() }}
+            errorMessage={userName.match(reg) ? "" : userName ? "At least 3  letters andor kanji " : ""}
+            onChangeText={function (text) {
+              setUserName(text)
+
+            }}
+          />
+        </AnimatedComponent>
+
       </AnimatedComponent>
 
-      <AnimatedComponent entering={BounceInDown.delay(300)}>
-        <Input ref={inputRef} placeholder='Enter a name'
-          inputContainerStyle={{ width: 0.8 * width, left: -10 + width * 0.1 }}
-          style={{ fontSize: 25 }}
-          value={userName}
-          textAlign={'center'}
-          onPressIn={function () { inputRef.current.blur(); inputRef.current.focus() }}
-          errorMessage={userName.match(reg) ? "" : userName ? "At least 3  letters andor kanji " : ""}
-          onChangeText={function (text) {
-            setUserName(text)
 
-          }}
-        />
-      </AnimatedComponent>
 
 
 
@@ -186,7 +189,7 @@ export function RegScreen({ }) {
       <AnimatedComponent style={cssStyle}>
 
 
-        <Button title="Sign up" containerStyle={{ width: width * 0.8, }} buttonStyle={{}} titleStyle={{}}
+        <Button title="Sign up" containerStyle={{ width: width * 0.8, }} buttonStyle={{}} titleStyle={{fontSize:20}} type="clear"
 
           disabled={!userName.match(reg) || disabled}
           onPress={function () {
@@ -205,7 +208,7 @@ export function RegScreen({ }) {
                 await createFolder(userName)
                 setToken(response.headers["x-auth-token"])
                 await AsyncStorage.setItem("token", response.headers["x-auth-token"])
-               
+
                 setPeopleList([{ name: userName, hasAvatar: avatarUri ? true : false, localImage: avatarUri || null }])
                 navigation.navigate("HomeScreen", { name: userName, fromRegScreen: true, })
 
@@ -235,7 +238,7 @@ export function RegScreen({ }) {
 
 
       <Button title={serverAddress}
-        containerStyle={{ position: "absolute", bottom: 10, width: width * 0.8, left: width * 0.1 }}
+        containerStyle={{ position: "absolute", bottom: 80, width: width * 0.8, left: width * 0.1 }}
         type="clear"
         //    buttonStyle={{ backgroundColor: "transparent" }}
         titleStyle={{ color: "blue" }}
