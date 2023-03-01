@@ -166,6 +166,9 @@ export function ProfileScreen() {
 
                         return axios.post(`${url}/api/image//updateavatar`, formData, { headers: { 'content-type': 'multipart/form-data', "x-auth-token": token } })
                             .then((response) => {
+
+                                console.log(token)
+
                                 setPeopleList(prepleList => {
                                     return peopleList.map(people => {
                                         if (people.name !== name) { return people }
@@ -193,6 +196,7 @@ export function ProfileScreen() {
 
                             })
                             .catch(e => {
+                                console.log(e)
                                 showSnackBar("avatar change failed")
                             })
                     }}
@@ -278,7 +282,7 @@ export function ProfileScreen() {
 
                         navigation.dispatch(state => {
                             // Remove the home route from the stack
-                            const routes = state.routes.filter(r => r.name !== 'ChatScreen');
+                            const routes = state.routes.filter(r => r.name !== 'ChatScreen' && r.name !== 'ChatAllScreen');
 
                             return CommonActions.reset({
                                 ...state,

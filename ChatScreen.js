@@ -315,7 +315,8 @@ export function ChatScreen() {
 
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
-                zIndex: 100
+                zIndex: 100,
+                elevation:2,
             }}
 
             >

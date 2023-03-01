@@ -65,12 +65,18 @@ export function HomeScreen({ }) {
     const url = useContextSelector(Context, (state) => (state.serverAddress))
     const navigation = useNavigation()
     const route = useRoute()
+    const HEADER_HEIGHT = useHeaderHeight()
+    
 
     //  console.log("========", route.params)
     const userName = useContextSelector(Context, (state) => (state.userName));
     const peopleList = useContextSelector(Context, (state) => (state.peopleList));
     const setPeopleList = useContextSelector(Context, (state) => (state.setPeopleList));
     const token = useContextSelector(Context, (state) => (state.token));
+
+    const avatarString = multiavatar(userName)
+    const bgColor = hexify(hexToRgbA(avatarString.match(/#[a-zA-z0-9]*/)[0]))
+
 
     const initialRouter = useContextSelector(Context, (state) => (state.initialRouter));
     const setUnreadCountObj = useContextSelector(Context, (state) => (state.setUnreadCountObj));
@@ -174,6 +180,41 @@ export function HomeScreen({ }) {
                         width={120} height={120} svgXmlData={multiavatar(userName)} />
                 </SharedElement>
             </View> */}
+
+            <View style={{
+
+                display: "flex", justifyContent: "center", alignItems: "flex-end",
+
+
+                backgroundColor: bgColor,
+                 width,
+                flexDirection: "row", height: HEADER_HEIGHT,
+                zIndex: 100,
+                elevation:2
+            }}>
+                <Text style={{fontSize:18}}>{userName}</Text>
+                <Icon
+                                    name="cloud-circle-outline"
+                                    //color='#517fa4'
+                                    color="gray"
+                                    type='ionicon'
+                                    size={35}
+                                    containerStyle={{
+                                        // width: 60, height: 60,
+                                        position:"absolute",
+                                        right:0
+                                        // display: "flex",
+                                        // alignItems: "center",
+                                        // justifyContent: "center",
+                                    }}
+                                    onPress={function () {
+                                       navigation.navigate("AddressScreen")
+                                    }}
+
+                                />
+            </View>
+
+
             <DraggableFlatList
                 data={peopleList}
                 //  onDragEnd={({ data }) => setData(data)}
@@ -330,12 +371,12 @@ function renderItem(props) {
 
 
                     <View style={{ marginHorizontal: 10 }}>
-                        <View style={{display:"flex",flexDirection:"row"}}>
+                        <View style={{ display: "flex", flexDirection: "row" }}>
                             <Text style={{ fontSize: 18 }}>
-                                {name + "  "}
+                                {name + " "}
                             </Text>
-                            <Text style={{color:"gray",transform:[{translateY:6}]}}>
-                                {textTime && formatDistanceToNow(new Date(textTime)).replace("about", "").replace(" hour", "h").replace(" minutes", "m").replace(" hours","h")}
+                            <Text style={{ color: "gray", transform: [{ translateY: 6 }] }}>
+                                {textTime && formatDistanceToNow(new Date(textTime)).replace("less than a minute", "just now").replace("about", "").replace(" hour", "h").replace(" minutes", "m").replace(" hours", "h")}
                             </Text>
                         </View>
                         <Text style={{ width: width - 100, color: "gray", fontSize: 18, lineHeight: 20, }} ellipsizeMode='tail' numberOfLines={1} >{text}</Text>

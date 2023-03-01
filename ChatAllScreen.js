@@ -264,6 +264,8 @@ export function ChatAllScreen() {
             canMoveDown.current = true
             setMessages(pre => {
                 return GiftedChat.prepend(pre, msg)
+                //  uniqByKeepFirst()
+                //return GiftedChat.append(messages, uniqByKeepFirst([msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8, msg9, msg10].filter(msg => Boolean(msg)),
             })
 
 
@@ -299,7 +301,8 @@ export function ChatAllScreen() {
 
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
-                zIndex: 100
+                zIndex: 100,
+                elevation:2
             }}>
 
 
@@ -845,7 +848,9 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
 
 
     const peopleList = useContextSelector(Context, (state) => (state.peopleList));
-    const isAvatar = Array.from(peopleList).find(item => item.name === name).hasAvatar
+    const isAvatar = Array.from(peopleList).find(item => item.name === name)?.hasAvatar
+
+
 
 
     return (
@@ -868,6 +873,7 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
 
             }
             <View ref={function (element) { viewRef.current = element }} style={{ maxWidth: width }} >
+                {isFromGuest && preSender !== sender && <Text style={{ color: "gray" }}>{sender}</Text>}
                 <Bubble {...props}
                     wrapperStyle={{
                         left: {

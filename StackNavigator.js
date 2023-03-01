@@ -144,13 +144,13 @@ export default function StackNavigator() {
 
             return {
               headerShown: true,
-              headerTransparent:true,
+              headerTransparent: true,
               header: (props) => <Header {...props} />,
               headerStyle: {
                 backgroundColor: "wheat",
                 elevation: 0
               },
-              headerTitle:"",
+              headerTitle: "",
               // headerRight: () => (
               //   <Button
               //     title="delete"
@@ -191,9 +191,9 @@ export default function StackNavigator() {
             return {
               headerShown: true,
               gestureEnabled: false,
-
+              headerTransparent: true,
               header: (props) => <Header {...props} />,
-
+              headerTitle:"",
               headerLeft: () => null,
               headerStyle: {
                 height: getStatusBarHeight() > 24 ? 70 : 60,
@@ -201,24 +201,24 @@ export default function StackNavigator() {
                 elevation: 0,
                 backgroundColor: "wheat"
               },
-              headerRight: () => (
-                <Button
-                  title="delete"
-                  onPress={function () {
-                    AsyncStorage.getItem("token").then(token => {
-                      console.log(token)
-                      token && deleteFolder(token.userName)
-                      token && AsyncStorage.removeItem("token")
-                    })
+              // headerRight: () => (
+              //   <Button
+              //     title="delete"
+              //     onPress={function () {
+              //       AsyncStorage.getItem("token").then(token => {
+              //         console.log(token)
+              //         token && deleteFolder(token.userName)
+              //         token && AsyncStorage.removeItem("token")
+              //       })
 
-                    AsyncStorage.getItem("serverAddress").then(serverAddress => {
-                      serverAddress && AsyncStorage.removeItem("serverAddress")
-                    })
+              //       AsyncStorage.getItem("serverAddress").then(serverAddress => {
+              //         serverAddress && AsyncStorage.removeItem("serverAddress")
+              //       })
 
 
-                  }}
-                />
-              ),
+              //     }}
+              //   />
+              // ),
 
               // color:"#fff",    
 
