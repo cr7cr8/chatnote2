@@ -61,7 +61,7 @@ import { Context } from "./ContextProvider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import defaultUrl, { hexToRgbA, hexify, moveArr, uniqByKeepFirst, ScaleView, ScaleAcitveView, createFolder, deleteFolder, useKeyboardHeight } from "./config";
 import { useNavigation } from '@react-navigation/native';
-
+import { CommonActions } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
@@ -155,7 +155,7 @@ export function AdressScreen() {
 
                 />
 
-                {userName && <Button
+                {/* {userName && <Button
                     title="Delete Account"
                     buttonStyle={{ backgroundColor: 'rgba(214, 71, 67, 1)' }}
                     containerStyle={{
@@ -166,10 +166,21 @@ export function AdressScreen() {
                     titleStyle={{ color: 'white', marginHorizontal: 20 }}
                     onPress={async function () {
 
-                        userName && deleteFolder(userName)
-                        AsyncStorage.removeItem("token")
-                        AsyncStorage.removeItem("serverAddress")
-                        AsyncStorage.removeItem("notiToken")
+
+
+
+
+
+                        try {
+                            userName && deleteFolder(userName)
+                            AsyncStorage.removeItem("token")
+                            AsyncStorage.removeItem("serverAddress")
+                            AsyncStorage.removeItem("notiToken")
+                        }
+                        catch (e) {
+                            console.log(e)
+                        }
+
 
                         // AsyncStorage.getItem("token").then(token => {
                         //     console.log(token)
@@ -181,22 +192,45 @@ export function AdressScreen() {
                         //     serverAddress && AsyncStorage.removeItem("serverAddress")
                         // })
 
+                        // navigation.dispatch(state => {
+                        //     // Remove the home route from the stack
+                        //     const routes = state.routes.filter(r => r.name !== 'ChatScreen');
+
+                        //     return CommonActions.reset({
+                        //         ...state,
+                        //         routes,
+                        //         index: routes.length - 1,
+                        //     });
+                        // });
+
+                        //navigation.navigate("RegScreen")
+
+                        
+
+                        // navigation.dispatch(
+                        //     CommonActions.reset({
+                        //         index: 1,
+                        //         routes: [
+                        //             { name: 'RegScreen' },
+                        //         ],
+                        //     })
+                        // );
 
 
-                        navigation.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'RegScreen',
-                                    // params: { item: { name: value, hasAvatar: false } },
-                                },
-                            ],
-                        })
+                        // navigation.reset({
+                        //     index: 1,
+                        //     routes: [
+                        //         {
+                        //             name: 'RegScreen',
+                        //             // params: { item: { name: value, hasAvatar: false } },
+                        //         },
+                        //     ],
+                        // })
 
 
                     }}
 
-                />}
+                />} */}
 
 
 

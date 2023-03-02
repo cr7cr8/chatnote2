@@ -332,16 +332,16 @@ padding:0
               },
               headerTitle: function (props) { return <></> },
               headerTransparent: true,
-              headerRight: () => (
-                <Button
-                  title="delete"
-                  onPress={async function () {
-                    await deleteFolder(route.params.name)
-                    createFolder(route.params.name)
+              // headerRight: () => (
+              //   <Button
+              //     title="delete"
+              //     onPress={async function () {
+              //       await deleteFolder(route.params.name)
+              //       createFolder(route.params.name)
 
-                  }}
-                />
-              ),
+              //     }}
+              //   />
+              // ),
 
             }
 
