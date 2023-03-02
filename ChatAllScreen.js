@@ -51,7 +51,7 @@ const BOTTOM_HEIGHT = Math.max(0, height - WINDOW_HEIGHT - STATUS_HEIGHT);
 
 import {
     StyleSheet, Dimensions, TouchableOpacity, TouchableNativeFeedback, Pressable, TouchableHighlight, TouchableWithoutFeedback, Vibration, Button,
-    findNodeHandle, UIManager, Keyboard, Platform,Alert
+    findNodeHandle, UIManager, Keyboard, Platform, Alert
 } from 'react-native';
 import axios from 'axios';
 //import { OverlayDownloader } from './OverlayDownloader';
@@ -60,6 +60,7 @@ import Image from 'react-native-scalable-image';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
+//import * as Clipboard from 'expo-clipboard';
 const { View, Text, ScrollView: ScrollV, Extrapolate, createAnimatedComponent, Image: ImageV } = ReAnimated
 
 const AnimatedComponent = createAnimatedComponent(View)
@@ -302,7 +303,7 @@ export function ChatAllScreen() {
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
                 zIndex: 100,
-                elevation:2
+                elevation: 2
             }}>
 
 
@@ -976,7 +977,14 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
                     borderRadius: 8
                 }}>
 
-                    {isText && <Icon name="copy-outline" type='ionicon' color='white' size={50} style={{ padding: 4 }} />}
+                    {/* {isText && <Icon name="copy-outline" type='ionicon' color='white' size={50} style={{ padding: 4 }}
+
+                        onPress={function () {
+                            setVisible(false)
+                            Clipboard.setStringAsync(currentMessage.text);
+                        }}
+
+                    />} */}
                     {isText && <Icon name="trash-outline" type='ionicon' color='white' style={{ padding: 4 }} size={50} onPress={function () {
                         setVisible(false)
                         canMoveDown.current = false

@@ -60,6 +60,7 @@ import Image from 'react-native-scalable-image';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
+//import * as Clipboard from 'expo-clipboard';
 const { View, Text, ScrollView: ScrollV, Extrapolate, createAnimatedComponent, Image: ImageV } = ReAnimated
 
 
@@ -992,7 +993,15 @@ function BubbleBlock({ userName, hasAvatar, randomStr, url, canMoveDown, setMess
                     borderRadius: 8
                 }}>
 
-                    {isText && <Icon name="copy-outline" type='ionicon' color='white' size={50} style={{ padding: 4 }} />}
+                    {/* {isText && <Icon name="copy-outline" type='ionicon' color='white' size={50} style={{ padding: 4 }}
+
+                        onPress={function () {
+                            setVisible(false)
+                            Clipboard.setStringAsync(currentMessage.text);
+                        }}
+                    />
+
+                    } */}
                     {isText && <Icon name="trash-outline" type='ionicon' color='white' style={{ padding: 4 }} size={50} onPress={function () {
                         setVisible(false)
                         canMoveDown.current = false
