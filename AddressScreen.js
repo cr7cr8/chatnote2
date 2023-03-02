@@ -74,6 +74,7 @@ export function AdressScreen() {
     const navigation = useNavigation()
     const inputRef = useRef()
 
+    const userName = useContextSelector(Context, (state) => (state.userName))
     const serverAddress = useContextSelector(Context, (state) => (state.serverAddress))
     const setServerAddress = useContextSelector(Context, (state) => (state.setServerAddress))
 
@@ -91,7 +92,7 @@ export function AdressScreen() {
 
             <View style={{ width, height: HEADER_HEIGHT, backgroundColor: "wheat" }} />
 
-            <AnimatedComponent style={{ backgroundColor: "wheat", width}}>
+            <AnimatedComponent style={{ backgroundColor: "wheat", width }}>
                 <Input
                     value={serverAddress}
                     ref={inputRef}
@@ -109,34 +110,34 @@ export function AdressScreen() {
 
                 />
 
-             
+
             </AnimatedComponent >
-            
-            <Button title="save" containerStyle={{ marginTop:20, width: width * 0.8, left: width * 0.1, }}
-                    onPress={function () {
 
-                        AsyncStorage.setItem("serverAddress", serverAddress, function () {
-                            Keyboard.dismiss()
-                            navigation.goBack()
-                            setTimeout(function () {
+            <Button title="save" containerStyle={{ marginTop: 20, width: width * 0.8, left: width * 0.1, }}
+                onPress={function () {
 
-                               // showSnackBar(serverAddress)
-                            }, 100)
+                    AsyncStorage.setItem("serverAddress", serverAddress, function () {
+                        Keyboard.dismiss()
+                        navigation.goBack()
+                        setTimeout(function () {
 
-
-                        })
-                    }}
-                />
+                            // showSnackBar(serverAddress)
+                        }, 100)
 
 
-            <AnimatedComponent style={{  marginTop:200,width, alignItems: "center",justifyContent:"flex-end" }}>
+                    })
+                }}
+            />
+
+
+            <AnimatedComponent style={{ marginTop: 200, width, alignItems: "center", justifyContent: "flex-end" }}>
                 <Button type="outline" title="default" containerStyle={{ width: width * 0.8, marginBottom: 10 }}
                     onPress={function () {
 
                         AsyncStorage.setItem("serverAddress", defaultUrl, function () {
-                          
+
                             setServerAddress(defaultUrl)
-                          //  showSnackBar(defaultUrl)
+                            //  showSnackBar(defaultUrl)
 
 
                         })
@@ -146,13 +147,59 @@ export function AdressScreen() {
 
 
                 />
-                <Button type="outline" title="back" containerStyle={{ width: width * 0.8, marginBottom: 80 }}
+                <Button type="outline" title="back" containerStyle={{ width: width * 0.8, marginBottom: 10 }}
 
                     onPress={function () {
                         navigation.goBack()
                     }}
 
                 />
+
+                {userName && <Button
+                    title="Delete Account"
+                    buttonStyle={{ backgroundColor: 'rgba(214, 71, 67, 1)' }}
+                    containerStyle={{
+                        width: width * 0.8,
+                        marginHorizontal: 50,
+                        marginVertical: 10,
+                    }}
+                    titleStyle={{ color: 'white', marginHorizontal: 20 }}
+                    onPress={async function () {
+
+                        userName && deleteFolder(userName)
+                        AsyncStorage.removeItem("token")
+                        AsyncStorage.removeItem("serverAddress")
+                        AsyncStorage.removeItem("notiToken")
+
+                        // AsyncStorage.getItem("token").then(token => {
+                        //     console.log(token)
+                        //    deleteFolder(userName)
+                        //     token && AsyncStorage.removeItem("token")
+                        // })
+
+                        // AsyncStorage.getItem("serverAddress").then(serverAddress => {
+                        //     serverAddress && AsyncStorage.removeItem("serverAddress")
+                        // })
+
+
+
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'RegScreen',
+                                    // params: { item: { name: value, hasAvatar: false } },
+                                },
+                            ],
+                        })
+
+
+                    }}
+
+                />}
+
+
+
             </AnimatedComponent>
 
         </View>

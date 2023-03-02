@@ -272,7 +272,7 @@ export function ProfileScreen() {
             </View>}
 
 
-            <Button title="Empty dialogue" type="outline" containerStyle={{ width: width * 0.8, marginTop: 40, }}
+            {/* <Button title="Empty dialogue" type="outline" containerStyle={{ width: width * 0.8, marginTop: 40, }}
                 onPress={function () {
                     deleteFolder(name).then(() => {
                         return createFolder(name)
@@ -296,16 +296,16 @@ export function ProfileScreen() {
                 }}
 
 
-            />
+            /> */}
 
 
 
-            {userName === name && <Button title={url} type="clear" containerStyle={{ width: width * 0.8, marginTop: 10, }}
+            {/* {userName === name && <Button title={url} type="clear" containerStyle={{ width: width * 0.8, marginTop: 10, }}
                 onPress={function () {
                     navigation.navigate("AddressScreen")
                 }}
 
-            />}
+            />} */}
 
         </View>
     )

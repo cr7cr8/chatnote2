@@ -66,7 +66,7 @@ export function HomeScreen({ }) {
     const navigation = useNavigation()
     const route = useRoute()
     const HEADER_HEIGHT = useHeaderHeight()
-    
+
 
     //  console.log("========", route.params)
     const userName = useContextSelector(Context, (state) => (state.userName));
@@ -181,55 +181,56 @@ export function HomeScreen({ }) {
                 </SharedElement>
             </View> */}
 
-            <View style={{
+            {/* <View style={{
 
                 display: "flex", justifyContent: "center", alignItems: "flex-end",
 
 
                 backgroundColor: bgColor,
-                 width,
+                width,
                 flexDirection: "row", height: HEADER_HEIGHT,
                 zIndex: 100,
-                elevation:2
+                elevation: 2
             }}>
-                <Text style={{fontSize:18}}>{userName}</Text>
+                <Text style={{ fontSize: 18 }}>{userName}</Text>
                 <Icon
-                                    name="cloud-circle-outline"
-                                    //color='#517fa4'
-                                    color="gray"
-                                    type='ionicon'
-                                    size={35}
-                                    containerStyle={{
-                                        // width: 60, height: 60,
-                                        position:"absolute",
-                                        right:0
-                                        // display: "flex",
-                                        // alignItems: "center",
-                                        // justifyContent: "center",
-                                    }}
-                                    onPress={function () {
-                                       navigation.navigate("AddressScreen")
-                                    }}
+                    name="cloud-circle-outline"
+                    //color='#517fa4'
+                    color="gray"
+                    type='ionicon'
+                    size={35}
+                    containerStyle={{
+                        // width: 60, height: 60,
+                        position: "absolute",
+                        right: 0
+                        // display: "flex",
+                        // alignItems: "center",
+                        // justifyContent: "center",
+                    }}
+                    onPress={function () {
+                        navigation.navigate("AddressScreen")
+                    }}
 
-                                />
-            </View>
+                />
+            </View> */}
 
+            
+                <DraggableFlatList
+                    data={peopleList}
+                    //  onDragEnd={({ data }) => setData(data)}
 
-            <DraggableFlatList
-                data={peopleList}
-                //  onDragEnd={({ data }) => setData(data)}
+                    onDragEnd={function ({ data, ...props }) {
 
-                onDragEnd={function ({ data, ...props }) {
+                        axios.post(`${url}/api/user/resortuserlist`, data.map(item => item.name), { headers: { "x-auth-token": token } })
+                        setPeopleList(data)
+                    }}
+                    keyExtractor={(item) => (item.name)}
+                    renderItem={renderItem}
+                    showsVerticalScrollIndicator={true}
+                    containerStyle={{ transform: [{ translateY: 0 }] }}
 
-                    axios.post(`${url}/api/user/resortuserlist`, data.map(item => item.name), { headers: { "x-auth-token": token } })
-                    setPeopleList(data)
-                }}
-                keyExtractor={(item) => (item.name)}
-                renderItem={renderItem}
-                showsVerticalScrollIndicator={true}
-
-
-            />
+                />
+            
         </>
     )
 
@@ -323,8 +324,8 @@ function renderItem(props) {
     return (
 
         // <AnimatedComponent entering={getIndex() === 0 ? null : SlideInRight.delay(Math.min(getIndex() * 150,))} >
-        <AnimatedComponent entering={route.params?.fromRegScreen && getIndex() === 0 ? null : SlideInRight.delay(Math.min(getIndex() * 150, 3000)).duration(300)}  >
-
+        // <AnimatedComponent entering={route.params?.fromRegScreen && getIndex() === 0 ? null : SlideInRight.delay(Math.min(getIndex() * 150, 3000)).duration(300)}  >
+        <AnimatedComponent>
             < Pressable onLongPress={drag} onPress={
                 function () {
 

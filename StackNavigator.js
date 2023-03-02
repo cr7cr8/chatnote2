@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, useTransition } from 'react';
-import { StyleSheet, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { createStackNavigator, CardStyleInterpolators, TransitionPresets, HeaderTitle, Header } from '@react-navigation/stack';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
@@ -26,7 +26,7 @@ import { SharedElement } from 'react-navigation-shared-element';
 import SnackBar from './SnackBar';
 import jwtDecode from 'jwt-decode';
 
-
+import { ListItem, Avatar, LinearProgress, Button, Icon, Overlay, Input } from 'react-native-elements'
 import ReAnimated, {
   useAnimatedStyle, useSharedValue, useDerivedValue,
   withTiming, cancelAnimation, runOnUI, useAnimatedReaction, runOnJS,
@@ -95,6 +95,7 @@ export default function StackNavigator() {
   const [isTransitionPending, startTrasition] = useTransition()
   const initialRouter = useContextSelector(Context, (state) => (state.initialRouter))
   const url = useContextSelector(Context, (state) => (state.serverAddress))
+  const userName = useContextSelector(Context, (state) => (state.userName))
   return (
     <>
 
@@ -191,34 +192,50 @@ export default function StackNavigator() {
             return {
               headerShown: true,
               gestureEnabled: false,
-              headerTransparent: true,
+              // headerTransparent: true,
               header: (props) => <Header {...props} />,
-              headerTitle:"",
+              headerTitle: userName,
               headerLeft: () => null,
               headerStyle: {
                 height: getStatusBarHeight() > 24 ? 70 : 60,
                 //height: 60,
                 elevation: 0,
-                backgroundColor: "wheat"
+                backgroundColor: "wheat",
+
               },
-              // headerRight: () => (
-              //   <Button
-              //     title="delete"
-              //     onPress={function () {
-              //       AsyncStorage.getItem("token").then(token => {
-              //         console.log(token)
-              //         token && deleteFolder(token.userName)
-              //         token && AsyncStorage.removeItem("token")
-              //       })
+              headerRight: () => (
+                <Button
+                  type='clear'
+                  title=''
+                  containerStyle={{
+                     transform: [{ translateY: 0 }], 
+                   //  backgroundColor: "pink" ,
+padding:0
+                    }}
+                  icon={{
+                    name: 'cloud-circle-outline',
+                    type: 'ionicon',
+                    size: 25,
+                    color: 'gray',
+                    style:{   transform: [{ scale: 1.2 },{translateX:1}], margin:0}
+                  }}
+                  onPress={function () {
+                   
+                    navigation.navigate("AddressScreen")
+                    // AsyncStorage.getItem("token").then(token => {
+                    //   console.log(token)
+                    //   token && deleteFolder(token.userName)
+                    //   token && AsyncStorage.removeItem("token")
+                    // })
 
-              //       AsyncStorage.getItem("serverAddress").then(serverAddress => {
-              //         serverAddress && AsyncStorage.removeItem("serverAddress")
-              //       })
+                    // AsyncStorage.getItem("serverAddress").then(serverAddress => {
+                    //   serverAddress && AsyncStorage.removeItem("serverAddress")
+                    // })
 
 
-              //     }}
-              //   />
-              // ),
+                  }}
+                />
+              ),
 
               // color:"#fff",    
 
@@ -261,26 +278,26 @@ export default function StackNavigator() {
               },
               headerTransparent: true,
               headerTitle: () => <></>,
-              headerRight: () => (
-                <Button
-                  title="delete"
-                  onPress={async function () {
-                    await deleteFolder(route.params.name)
-                    createFolder(route.params.name)
-                    // AsyncStorage.getItem("token").then(token => {
-                    //   console.log(token)
-                    //   token && deleteFolder(token.userName)
-                    //   token && AsyncStorage.removeItem("token")
-                    // })
+              // headerRight: () => (
+              //   <Button
+              //     title="delete"
+              //     onPress={async function () {
+              //       await deleteFolder(route.params.name)
+              //       createFolder(route.params.name)
+              //       // AsyncStorage.getItem("token").then(token => {
+              //       //   console.log(token)
+              //       //   token && deleteFolder(token.userName)
+              //       //   token && AsyncStorage.removeItem("token")
+              //       // })
 
-                    // AsyncStorage.getItem("serverAddress").then(serverAddress => {
-                    //   serverAddress && AsyncStorage.removeItem("serverAddress")
-                    // })
+              //       // AsyncStorage.getItem("serverAddress").then(serverAddress => {
+              //       //   serverAddress && AsyncStorage.removeItem("serverAddress")
+              //       // })
 
 
-                  }}
-                />
-              ),
+              //     }}
+              //   />
+              // ),
 
             }
 

@@ -51,7 +51,7 @@ const BOTTOM_HEIGHT = Math.max(0, height - WINDOW_HEIGHT - STATUS_HEIGHT);
 
 import {
     StyleSheet, Dimensions, TouchableOpacity, TouchableNativeFeedback, Pressable, TouchableHighlight, TouchableWithoutFeedback, Vibration, Button,
-    findNodeHandle, UIManager, Keyboard, Platform
+    findNodeHandle, UIManager, Keyboard, Platform, Alert
 } from 'react-native';
 import axios from 'axios';
 //import { OverlayDownloader } from './OverlayDownloader';
@@ -316,7 +316,7 @@ export function ChatScreen() {
                 backgroundColor: bgColor, width,
                 flexDirection: "row", height: HEADER_HEIGHT,
                 zIndex: 100,
-                elevation:2,
+                elevation: 2,
             }}
 
             >
@@ -345,6 +345,34 @@ export function ChatScreen() {
                 <Pressable onPress={function () { navigation.navigate("ProfileScreen", { name, hasAvatar, randomStr, localImage, userName }) }} style={{ zIndex: 150 }}>
                     <Text style={{ fontSize: 15, color: "black", transform: [{ translateY: 6 }, { translateX: 0 }] }}>{name}</Text>
                 </Pressable>
+
+                <Icon name="trash-outline" type='ionicon' color='gray'
+                    containerStyle={{ position: "absolute", right: 0, transform: [{ translateY: 6 }] }}
+                    size={30} onPress={function () {
+
+                        Alert.alert(
+                            "",
+                            `Remove all ${name}'s messages ?`,
+                            [
+                                // The "Yes" button
+                                {
+                                    text: "Yes",
+                                    onPress: async () => {
+                                        await deleteFolder(name)
+                                        createFolder(name)
+                                        setMessages([])
+                                        allMessages.current = []
+                                    },
+                                },
+                                // The "No" button
+                                // Does nothing but dismiss the dialog when tapped
+                                {
+                                    text: "No",
+                                },
+                            ]
+                        );
+                    }} />
+
 
             </View>
 
