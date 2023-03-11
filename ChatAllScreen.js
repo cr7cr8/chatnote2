@@ -375,7 +375,13 @@ export function ChatAllScreen() {
                     onContentSizeChange: (contentWidth, contentHeight) => {
                         //   console.log(contentWidth, contentHeight)
                         scrollDepth.current = contentHeight
-                        canMoveDown.current && scrollRef.current.scrollToEnd({ animated: true })
+
+                        try {
+                            canMoveDown.current && scrollRef.current.scrollToEnd({ animated: true })
+                        }
+                        catch (e) {
+                            console.log(e)
+                        }
                     },
                     onScroll: function (e) {
 
