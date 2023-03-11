@@ -382,6 +382,9 @@ export function ChatScreen() {
                     style={{ margin: 10, width: 40, height: 40, transform: [{ translateY: 0 }, { translateX: 0 }], borderRadius: 1000 }}
                 />
             </Pressable> */}
+
+
+
             <GiftedChat
 
                 user={{ _id: userName }}
@@ -400,7 +403,13 @@ export function ChatScreen() {
                     onContentSizeChange: (contentWidth, contentHeight) => {
                         //   console.log(contentWidth, contentHeight)
                         scrollDepth.current = contentHeight
+                       
+                       try{
                         canMoveDown.current && scrollRef.current.scrollToEnd({ animated: true })
+                       }
+                       catch(e){
+                        console.log(e)
+                       }
                     },
                     onScroll: function (e) {
 
@@ -822,17 +831,7 @@ export function ChatScreen() {
                     micBarWidth.value = micBarWidth.value === 0 ? width - 120 : 0
                 }}
 
-            // onLoadEarlier={function () {
-            //     console.log("loading early")
-            // }}
-            // loadEarlier={true} //show load earlier message bar
-            // isLoadingEarlier={false}
-            // renderLoadEarlier={function (props) {
-            //     // return <></>
-            //    // console.log(props.isLoadingEarlier)
-            //     return <View style={{ backgroundColor: "skyblue" }}><Text>load messages</Text></View>
-            // }}
-
+    
             />
         </>
     )

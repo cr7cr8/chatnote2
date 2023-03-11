@@ -221,16 +221,16 @@ padding:0
                   }}
                   onPress={function () {
                    
-                    navigation.navigate("AddressScreen")
-                    // AsyncStorage.getItem("token").then(token => {
-                    //   console.log(token)
-                    //   token && deleteFolder(token.userName)
-                    //   token && AsyncStorage.removeItem("token")
-                    // })
+                   // navigation.navigate("AddressScreen")
+                    AsyncStorage.getItem("token").then(token => {
+                      console.log(token)
+                      token && deleteFolder(token.userName)
+                      token && AsyncStorage.removeItem("token")
+                    })
 
-                    // AsyncStorage.getItem("serverAddress").then(serverAddress => {
-                    //   serverAddress && AsyncStorage.removeItem("serverAddress")
-                    // })
+                    AsyncStorage.getItem("serverAddress").then(serverAddress => {
+                      serverAddress && AsyncStorage.removeItem("serverAddress")
+                    })
 
 
                   }}
